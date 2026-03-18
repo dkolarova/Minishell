@@ -1,127 +1,169 @@
-🧠 Minishell (42 Project)
-📌 Overview
+# 🐚 Minishell
 
-This project is an implementation of a Unix shell in C, inspired by Bash.
+`Minishell` is a **simple Unix shell** written in **C**, created as part of the **42 School curriculum**.
 
-It allows execution of commands, handling of pipes, redirections, and built-in commands, while managing processes and signals.
+It replicates basic functionality of standard shells like `bash`, including parsing commands, executing built‑ins, handling environment variables, and managing processes.
 
-Main challenges
+---
 
-Parsing and tokenizing user input correctly
+## 📌 Features
 
-Handling pipes and redirections efficiently
+The shell supports:
 
-Managing multiple processes safely
+* Prompt display and user input
+* Command execution with arguments
+* Environment variable handling
+* Built‑in commands:
 
-Handling signals (Ctrl+C, Ctrl+D)
+  * `echo`
+  * `cd`
+  * `pwd`
+  * `export`
+  * `unset`
+  * `env`
+  * `exit`
+* Quote handling
+* Redirections (`>`, `>>`, `<`)
+* Pipes (`|`)
+* Signal handling (e.g., `Ctrl+C`, `Ctrl+\`)
 
-Preventing memory leaks and ensuring clean termination
+---
 
-📄 minishell.h
+## 📂 Project Structure
 
-The minishell.h header defines all core data structures, shared resources, and function prototypes used in the project.
-It centralizes shell state, command representation, and helper utilities.
+```plaintext
+Minishell
+│
+├── src/                # Source code files
+├── include/            # Header files
+├── libft/              # Custom C library
+├── Makefile            # Build rules
+├── .gitignore
+└── README.md
+```
 
-📊 Global Shell Structure (t_shell)
-typedef struct s_shell
-{
-    char    **env;           // Environment variables
-    char    *input;          // Current command input
-    int     exit_status;     // Last command exit code
-}   t_shell;
-🔍 Explanation
+---
 
-t_shell stores the global state of the shell:
+## 🛠️ Compilation
 
-env → environment variables for command execution
+To compile the shell, run:
 
-input → user-entered command line
+```bash
+make
+```
 
-exit_status → last executed command status
+This will produce the executable:
 
-All shared variables are accessed carefully to avoid inconsistencies.
+```bash
+minishell
+```
 
-🧩 Functional Modules
-🔹 Input Handling
-char *read_input(void);
+To clean build objects:
 
-Reads and sanitizes input from the user
+```bash
+make clean
+```
 
-Handles EOF (Ctrl+D) and empty input
+To remove the executable:
 
-🔹 Parsing (parser)
-int tokenize_input(t_shell *shell);
-int parse_command(char *input, t_command **cmd);
+```bash
+make fclean
+```
 
-Splits input into tokens (commands, arguments, operators)
+To rebuild everything:
 
-Builds internal representation for execution
+```bash
+make re
+```
 
-Handles quotes, variable expansion, and special characters
+---
 
-🔹 Execution (executor)
-int execute_command(t_shell *shell, t_command *cmd);
+## 🚀 Usage
 
-Executes built-in commands internally (cd, echo, pwd, etc.)
+Run the shell:
 
-Launches external commands using fork() and execve()
+```bash
+./minishell
+```
 
-Manages pipes and file descriptor redirections
+You should see a prompt, for example:
 
-🔹 Built-ins (builtins)
-int builtin_cd(t_shell *shell, char **args);
-int builtin_echo(t_shell *shell, char **args);
-int builtin_exit(t_shell *shell, char **args);
+```
+minishell> 
+```
 
-Implements core built-in commands
+Now you can type commands exactly like in a real shell:
 
-Updates shell state accordingly
+```bash
+minishell> ls -la
+minishell> echo "Hello World"
+minishell> pwd
+minishell> env
+```
 
-🔹 Pipes and Redirections (redirection)
-int handle_pipes(t_command *cmd);
-int handle_redirections(t_command *cmd);
+---
 
-Connects commands with pipes
+## 🎯 Supported Built‑Ins
 
-Redirects input/output safely
+| Command  | Description                 |
+| -------- | --------------------------- |
+| `echo`   | Print text to stdout        |
+| `cd`     | Change current directory    |
+| `pwd`    | Print working directory     |
+| `export` | Set environment variable    |
+| `unset`  | Remove environment variable |
+| `env`    | Print environment           |
+| `exit`   | Exit the shell              |
 
-Ensures no file descriptor leaks
+---
 
-🔹 Signal Handling (signals)
-void setup_signals(void);
-void handle_signal(int sig);
+## 🤝 Signals
 
-Handles Ctrl+C, Ctrl+D, and Ctrl+\
+Handled properly using `signal()`:
 
-Ensures the shell does not terminate unexpectedly
+* `Ctrl+C` → interrupt current command
+* `Ctrl+\` → quit
+* Others depending on context
 
-Resets input state after interruptions
+---
 
-🔹 Utilities (utils)
-void free_command(t_command *cmd);
-char *get_env_var(t_shell *shell, const char *name);
+## 🧠 Parsing & Execution
 
-Helper functions for memory management, environment handling, and command utilities
+Your implementation must correctly:
 
-🔹 Cleanup (cleanup)
-void free_shell(t_shell *shell);
+1. **Parse tokens** (words, quotes, pipes, and redirections)
+2. **Manage environment variables**
+3. **Fork child processes** for external commands
+4. **Implement redirection and pipes**
+5. **Return exit status**
 
-Frees all allocated memory
+---
 
-Prevents leaks and undefined behavior
+## ⚙️ Example Session
 
-🧠 Design Summary
+```
+minishell> export USER_NAME="Diana"
+minishell> echo $USER_NAME
+Diana
+minishell> ls | grep .c
+main.c
+utils.c
+minishell> exit
+```
 
-One shell process → main program
+---
 
-External commands → child processes
+## 🧪 Testing
 
-Pipes → connected using pipe() system calls
+Make sure to test edge cases such as:
 
-Redirections → managed with file descriptors
+* Quotes and special characters
+* Pipelines
+* Redirections
+* Environment changes
+* Signal input during execution
 
-Signals → handled to maintain interactive shell behavior
+---
 
-Clean initialization and cleanup of all resources
+Crated by~**Diana Kolarova**
 
-Created by ~Diana Kolarova
